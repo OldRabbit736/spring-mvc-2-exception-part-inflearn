@@ -9,6 +9,23 @@
         <h2>500 오류 화면 스프링 부트 제공</h2></div>
     <div>
         <p>오류 화면 입니다.</p></div>
+
+    <!--    이런 오류 상세 내용은 절대 외부로 보내지 말자. 그냥 아예 없는 것이라 생각하고 사용 안하는 게 좋다. 대신 로그로 남겨야 한다. -->
+    <ul>
+        <li>오류 정보</li>
+        <ul>
+            <li th:text="|timestamp: ${timestamp}|"></li>
+            <li th:text="|path: ${path}|"></li>
+            <li th:text="|status: ${status}|"></li>
+            <li th:text="|message: ${message}|"></li>
+            <li th:text="|error: ${error}|"></li>
+            <li th:text="|exception: ${exception}|"></li>
+            <li th:text="|errors: ${errors}|"></li>
+            <li th:text="|trace: ${trace}|"></li>
+        </ul>
+        </li>
+    </ul>
+
     <hr class="my-4">
 </div> <!-- /container -->
 </body>
