@@ -1,18 +1,49 @@
 package hello.exception;
 
 import hello.exception.filter.LogFilter;
+import hello.exception.interceptor.LogInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
+
+/*
+결론
+- 필터는 setDispatcherTypes 메서드를 통해 중복 호출 제거
+- 인터셉터는 경로 정보로 중복 호출 제거 (excludePathPatterns)
+
+전체 흐름 정리
+1. WAS(/error-ex, dispatchType=REQUEST) -> filter -> servlet(DispatcherServlet) -> interceptor -> controller
+2. WAS(여기까지 전파) <- filter <- servlet <- interceptor <- controller(예외발생)
+3. WAS 가 등록된 오류 페이지 확인하고 해당 주소로 다시 호출
+4. WAS(/error-page/500, dispatchType=ERROR) -> filter(x) -> servlet -> interceptor(x)
+   -> controller(/error-page/500) -> view
+
+참조
+- filter 는 servlet 기술이지만, interceptor 는 spring 기술이다.
+ */
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Bean
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogInterceptor())
+                .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "*.ico", "/error", "/error-page/**");
+                /*
+                filter 처럼 setDispatcherTypes 같은 메서드는 없다.
+                excludePathPatterns 를 이용하면 된다.
+                 */
+    }
+
+    //@Bean
     public FilterRegistrationBean logFilter() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new LogFilter());
@@ -32,4 +63,3 @@ public class WebConfig implements WebMvcConfigurer {
     }
 }
 
-// 참조: filter 는 servlet 기술이지만, interceptor 는 spring 기술이다.
