@@ -21,6 +21,18 @@ public class WebServerCustomizer implements WebServerFactoryCustomizer<Configura
 
         즉 servlet container 는 response 들을 모니터링 하고 있다가 여기서 등록한 exception 이나 error 가 포함된 response 를 감지하면
         다시 부메랑처럼 servlet 을 호출한다.
+
+
+        예외 발생과 오류 페이지 요청 흐름
+        - WAS (여기까지 전파) <- 필터 <- 서블릿 <- 인터셉터 <- 컴트롤러(예외발생)
+        - WAS `/error-page/500` 다시 요청 -> 필터 -> 서블릿 -> 인터셉터 -> 컨트롤(/error-page/500)
+        - 웹 브라우저(클라이언트)는 서버 내부에서 이런 일이 일어나는지 젼혀 모른다. (redirect 가 아니기 때문)
+
+
+        오류 정보 추가
+        - WAS 는 다시 요청하는 것만이 아니라, 오류 정보를 request 의 attribute 에 추가해서 넘겨준다.
+
+
          */
 
         ErrorPage errorPage404 = new ErrorPage(HttpStatus.NOT_FOUND, "/error-page/404");
