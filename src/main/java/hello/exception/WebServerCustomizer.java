@@ -7,8 +7,36 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /*
-Web 서버 설정을 위해 spring boot 에서 제공하는 인터페이스
-BasicErrorController 를 제대로 활용하기 위해서는 Customizer 를 꺼야 한다.
+
+스프링 부트가 제공하는 BasicErrorController 는 HTML 페이지를 제공하는 경우에는 매우 편리하다.(4xx, 5xx 페이지)
+그런데 API 오류 처리는 다른 차원의 이야기이다.
+API 마다, 각각의 컨트롤러나 예외마다 서로 다른 응답 결과를 출력해야 할 수도 있다. (매우 세밀하고 복잡하다.)
+BasicErrorController 는 HTML 화면을 처리할 때 사용하고, API 오류 처리는 @ExceptionHandler 를 사용하자!
+
+
+WAS 이 Exception 이나 response.sendError 등에 반응하게(재요청) 끔 만들어 주는 방법 2가지가 있다.
+- 스프링 기본 기능 사용
+    - WAS 는 아무런 설정이 없어도 /error 경로로 다시 요청을 보내도록 설정된다. (스프링부트가 설정)
+    - 그리고 이 요청은 이미 만들어져 있는 BasicErrorController 가 처리하도록 되어 있다.
+    - 사실상 아무것도 안 건드려도, WAS 는 /error 로 재 요청하고, BasicErrorController 는 요청에 걸맞은 응답을 보낸다.
+    - API 든 웹 페이지든 어쨌든 응답을 보내야 한다.
+    - client 에서 Accept 헤더 설정에 따라 BasicErrorController 가 호출하는 메서드가 달라지게 된다.
+    - Accept=text/html 일 때 BasicErrorController 는 "errorHtml" 메서드를 이용하여
+      웹 페이지(resources/static/error, resources/templates/error 등)를 리턴한다.
+    - 그 외 경우에는 BasicErrorController 는 "error" 메서드를 이용하여 아래와 http body 에 JSON 데이터를 반환한다.
+        {
+            "timestamp": "2022-07-29T12:30:34.162+00:00",
+            "status": 500,
+            "error": "Internal Server Error",
+            "exception": "java.lang.RuntimeException",
+            "path": "/api/members/ex"
+        }
+
+- 커스텀 : WebServerFactoryCustomizer 사용
+    - 아래와 같이 설정 Bean 을 만든다. 여기서 설정한 경로로 WAS 가 재요청을 보내게 된다.
+    - 해당 경로에 반응할 컨트롤러를 만들어 두어야 한다.
+
+참고: BasicErrorController 를 제대로 활용하기 위해서는 Customizer 를 꺼야 한다. (@Component 주석 처리)
 
 
 예외 처리 페이지를 만들기 위해서 다음과 같은 과정을 거쳤다.
@@ -38,7 +66,7 @@ BasicErrorController 를 제대로 활용하기 위해서는 Customizer 를 꺼�
     - 기본 리소스
         - resources/templates/error.html
  */
-@Component
+//@Component
 public class WebServerCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
 
     @Override
