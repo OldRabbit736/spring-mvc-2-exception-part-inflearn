@@ -38,7 +38,7 @@ BasicErrorController 를 제대로 활용하기 위해서는 Customizer 를 꺼�
     - 기본 리소스
         - resources/templates/error.html
  */
-//@Component
+@Component
 public class WebServerCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
 
     @Override
