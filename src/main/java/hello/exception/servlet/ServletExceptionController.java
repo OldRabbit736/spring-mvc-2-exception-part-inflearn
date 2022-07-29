@@ -80,6 +80,11 @@ public class ServletExceptionController {
         response.sendError(404, "404 오류!"); // 오류 메시지는 기본적으로 숨겨서 클라이언트에 반환하지만 설정을 통해 드러나도록 할 수 있다.
     }
 
+    @GetMapping("/error-400")
+    public void error400(HttpServletResponse response) throws IOException {
+        response.sendError(400, "400 오류!");
+    }
+
     // WAS 가 sendError 호출 확인 --> WAS 가 해당 오류 코드에 맞춘 기본 오류 페이지를 클라이언트에 반환
     @GetMapping("/error-500")
     public void error500(HttpServletResponse response) throws IOException {
