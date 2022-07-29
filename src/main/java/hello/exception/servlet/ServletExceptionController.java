@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -32,6 +33,34 @@ response.sendError(HTTP 샹태 코드, 오류 메시지)
   호출 되었다면 설정한 오류 코드에 맞춰 기본 오류 페이지를 보여준다.
 - sendError 흐름
   WAS (sendError 호출 기록 확인) <- 필터 <- 서블릿 <- 인터셉터 <- 컨트롤러(response.sendError())
+
+
+예외 발생과 오류 페이지 요청 흐름
+- WAS (여기까지 전파) <- 필터 <- 서블릿 <- 인터셉터 <- 컴트롤러(예외발생)
+- WAS `/error-page/500` 다시 요청 -> 필터 -> 서블릿 -> 인터셉터 -> 컨트롤(/error-page/500)
+- 웹 브라우저(클라이언트)는 서버 내부에서 이런 일이 일어나는지 젼혀 모른다. (redirect 가 아니기 때문)
+
+오류 정보 추가
+- WAS 는 다시 요청하는 것만이 아니라, 오류 정보를 request 의 attribute 에 추가해서 넘겨준다. (ErrorPageController.java 파일에서 내용 확인 가능)
+
+서블릿 예외 처리 - 필터
+- 오류가 발생하면 다시 호출하면서 필터, 서블릿, 인터셉터 모두 다시 호출된다.
+- 로그인 인증 체크 같은 경우, 이미 한번 필터나 인터셉터에서 완료되었다.
+  따라서 오류 페이지 호출 과정에서 다시 한번 더 호출될 필요는 없다.
+- 클라이언트에서 발생한 요청인지, 아니면 오류 페이지를 출력하기 위한 내부 요청인지를 구별하는 방법이 필요하다.
+- 이 문제를 해결하기 위해 DispatcherType 이라는 추가 정보가 제공된다.
+- HttpServletRequest.getDispatcherType() 호출 시 DispatcherType 값이 리턴된다.
+
+DispatcherType
+- javax.servlet.DispatcherType (Enum)
+- 종류
+    - FORWARD: 서블릿에서 다른 서블릿이나 JSP 를 호출할 때 - RequestDispatcher.forward(request, response)
+    - INCLUDE: 서블릿에서 다른 서블릿이나 JSP 의 결과를 포함할 때 - RequestDispatcher.include(request, response)
+    - REQUEST: 클라이언트 요청
+    - ASYNC: 서블릿 비동기 호출
+    - ERROR: 오류 요청
+
+
 */
 
 @Slf4j
