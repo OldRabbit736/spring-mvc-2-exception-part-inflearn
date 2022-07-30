@@ -37,6 +37,22 @@ ResponseStatusException 예외
 - /exception/api/ApiExceptionController#responseStatusEx2 참조
 - 이 Exception 을 ResponseStatusExceptionResolver 가 처리할 때도 결국 sendError 를 호출한다.
 
+
+DefaultHandlerExceptionResolver
+- 스프링 내부에서 발생하는 스프링 예외를 해결한다.
+- 파라미터 바인딩 시점에 타입이 맞지 않으면 TypeMismatchException 이 발생하는데,
+  만약 그대로 두면 서블릿 컨테이너까지 오류가 올라가거, 결과적으로 500 오류가 발생한다.
+- 하지만 파라미터 바인딩은 대부분 클라이언트가 HTTP 요청 정보를 잘못 호출해서 발생한다.
+  이 경우에 HTTP 상태코드 400이 적절하다.
+- DefaultHandlerExceptionResolver 는 해당 예외를 400 오류로 변경해준다.
+- 이 외에도 스프링에서 발생하는 수 많은 Exception 에 대한 대응 내용이 작성되어 있다.
+- 이 resolver 도 마찬가지로 response.sendError 를 호출한다.
+- /exception/api/ApiExceptionController#defaultException 참조
+
+
+
+
+
  */
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "잘못된 요청 오류")

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,6 +44,11 @@ public class ApiExceptionController {
         // ResponseStatusException : HTTP 상태코드도 같이 지정할 수 있는 Exception
         // messages.properties 에서 "error.bad" 키로 메시지 가져옴 (그냥 직접 여기에 입력하는 것도 가능)
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new IllegalArgumentException());
+    }
+
+    @GetMapping("/api/default-handler-ex")
+    public String defaultException(@RequestParam Integer data) {
+        return "ok";
     }
 
     @Data
