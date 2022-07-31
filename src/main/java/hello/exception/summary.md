@@ -39,3 +39,6 @@ DefaultHandlerExceptionResolver는
 ### API 예외 처리의 어려운 점
 
 ### @ExceptionHandler
+
+# 결론  
+### API 예외처리는 @ExceptionHandler + @ControllerAdvice 조합을 사용하자!
