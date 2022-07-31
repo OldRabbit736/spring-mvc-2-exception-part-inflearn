@@ -24,7 +24,7 @@ resolve 결과로 HttpServletResponse가 DispatcherServlet으로 전달되면,
 ## 뭘 써야 하죠?
 HandlerExceptionHandler를 직접 사용하기는 복잡하다.  
 API 오류 응답의 경우 response에 직접 데이터를 세팅해야 해서 불편하고 번거롭다.  
-필요도 없는 경우에도 ModelAndView는 무조건 반환해야 하는 점도 API 응답할 때 번거러운 점이 된다. 
+필요도 없는 경우에도 ModelAndView는 무조건 반환해야 하는 점도 어려운 점이다. 
 
 ResponseStatusExceptionResolver는 예외를 HTTP 상태코드로 자동 변환해주고,
 DefaultHandlerExceptionResolver는 
@@ -32,3 +32,10 @@ DefaultHandlerExceptionResolver는
 스프링은 이 문제를 해결하기 위해 ExceptionHandlerExceptionResolver라는
 매우 혁신적인 예외 처리 기능을 제공한다.  
 이것을 사용하자!
+
+## API 예외 처리와 @ExceptionHandler
+### HTML 화면 오류 vs API 오류
+
+### API 예외 처리의 어려운 점
+
+### @ExceptionHandler
