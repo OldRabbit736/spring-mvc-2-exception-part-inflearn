@@ -47,10 +47,16 @@ response body를 설정 못 한다는 것이다.
 이것을 사용하자!
 
 ExceptionHandlerExceptionResolver는 @ExceptionHandler 메서드로 에러 resolve를 시도한다.
-또한 @ControllerAdvice controller를 따로 정의해서 여기에 @ExceptionHandler를 모아둘 수 있다.
+또한 @ControllerAdvice controller를 따로 정의해서 여기에 @ExceptionHandler를 모아둘 수 있다.  
+@ControllerAdvice는 global하게 ExceptionHandler를 적용할 수 있게 해주어 따로 흩어진 ExceptionHandler 로직을 응집하게 해 준다.  
 ExceptionHandlerExceptionResolver는 Resolver 중 우선순위가 제일 높으며 자동으로 스프링에 의해 로드된다.
 이 방식으로 exception, controller 별 세밀한 응답을 설정할 수 있고, 에러 핸들링 로직과 컨트롤러를 분리시켜줄 수 있어
 깔끔하고 이해가 쉬운 코드 구조를 유지할 수 있게 해 준다.
 
+
 ## 결론  
-### API 예외처리는 @ExceptionHandler + @ControllerAdvice 조합을 사용하자!
+### API 예외처리는 ExceptionHandlerExceptionResolver + @ExceptionHandler + @ControllerAdvice 조합을 사용하자!
+
+## 더 읽을거리
+아래 페이지에서 좀 더 많은 정보를 얻을 수 있다.  
+https://www.baeldung.com/exception-handling-for-rest-with-spring
